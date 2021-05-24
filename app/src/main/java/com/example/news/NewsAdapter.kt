@@ -1,8 +1,7 @@
 package com.example.news
 
 import android.content.Context
-import android.graphics.Color
-import android.util.Log
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,18 +21,15 @@ class NewsAdapter(val context: Context, val articles: List<Article>): RecyclerVi
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
         val article: Article = articles[position]
         holder.newsTitle.text = article.title
-        holder.newsTitle.setBackgroundColor(Color.parseColor(MyColorsList.getColor2()))
+        //holder.newsTitle.setBackgroundColor(Color.parseColor(MyColorsList.getColor2()))
         holder.newsDescription.text = article.description
-        holder.newsDescription.setBackgroundColor(Color.parseColor(MyColorsList.getColor3()))
-        Log.d("SUNIDHI", article.urlToImage)
-//        val options: RequestOptions = RequestOptions()
-//            .centerCrop()
-//
-//        Glide.with(context).load(article.toString()).apply(options).into(holder.newsImage)
-
+        //holder.newsDescription.setBackgroundColor(Color.parseColor(MyColorsList.getColor3()))
         Glide.with(context).load(article.urlToImage).into(holder.newsImage)
         holder.itemView.setOnClickListener{
             Toast.makeText(context, article.title, Toast.LENGTH_SHORT).show()
+            val intent = Intent(context, DetailActivity::class.java)
+            intent.putExtra("URL", article.url)
+            context.startActivity(intent)
         }
     }
 

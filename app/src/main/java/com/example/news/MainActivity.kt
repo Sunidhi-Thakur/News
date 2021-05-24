@@ -15,6 +15,10 @@ class MainActivity : AppCompatActivity() {
     lateinit var adapter: NewsAdapter
     lateinit var binding: ActivityMainBinding
     private var articles = mutableListOf<Article>()
+    var pageNumber = 1
+    var totalResults = -1
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -33,6 +37,12 @@ class MainActivity : AppCompatActivity() {
         layoutManager.setItemChangedListener(object : StackLayoutManager.ItemChangedListener {
             override fun onItemChanged(position: Int) {
                 binding.container.setBackgroundColor(Color.parseColor(MyColorsList.getColor1()))
+                if (totalResults>=layoutManager.itemCount && layoutManager.getFirstVisibleItemPosition() >= layoutManager.itemCount -5 ){
+                    pageNumber++
+                    getNews()
+                }
+
+
             }
         })
         binding.newsList.layoutManager = layoutManager
@@ -41,12 +51,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getNews() {
-       val news: Call<News> = NewsService.newsInstance.getHeadlines("in", 1)
+       val news: Call<News> = NewsService.newsInstance.getHeadlines("in", pageNumber)
         news.enqueue(object : Callback<News> {
             override fun onResponse(call: Call<News>, response: Response<News>) {
                 val news: News? = response.body()
                 if (news != null) {
-                    Log.d("SUNIDHI", news.toString())
+                    totalResults = news.tRes
                     articles.addAll(news.articles)
                     adapter.notifyDataSetChanged() //Re-render data
                 }
